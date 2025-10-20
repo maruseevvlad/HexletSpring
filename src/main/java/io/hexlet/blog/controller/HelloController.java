@@ -6,12 +6,9 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 public class HelloController {
-    @GetMapping("/about")
-    public String index() {
-        return "A boilerplate created by Hexlet";
-    }
+
     @GetMapping("/")
-    public RedirectView root() {
-        return new RedirectView("/about");
+    public String home() {
+        return "Добро пожаловать в Hexlet Spring Blog!";
     }
 }
