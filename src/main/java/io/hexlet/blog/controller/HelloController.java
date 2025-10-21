@@ -1,16 +1,31 @@
 package io.hexlet.blog.controller;
 
 import io.hexlet.blog.model.Post;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// Кастомное исключение
+class PostNotFoundException extends RuntimeException {
+    public PostNotFoundException(String id) {
+        super("Пост с id=" + id + " не найден");
+    }
+}
+
+// Глобальный обработчик для 404
+@RestControllerAdvice
+class GlobalExceptionHandler {
+    @ExceptionHandler(PostNotFoundException.class)
+    public ResponseEntity<String> handlePostNotFound(PostNotFoundException e) {
+        return ResponseEntity.status(404).body(e.getMessage());
+    }
+}
+
 @RestController
 public class HelloController {
-    private List<Post> posts = new ArrayList<>();
+    private final List<Post> posts = new ArrayList<>();
 
     @GetMapping("/")
     public String home() {
@@ -23,31 +38,33 @@ public class HelloController {
     }
 
     @PostMapping("/post")
-    public Post create(@RequestBody Post post) {
+    public ResponseEntity<Post> create(@RequestBody Post post) {
         posts.add(post);
-        return post;
+        return ResponseEntity.status(201).body(post);
     }
 
     @GetMapping("/posts/{id}")
-    public Optional<Post> show(@PathVariable String id) {
-        var post = posts.stream()
+    public ResponseEntity<Post> show(@PathVariable String id) {
+        Post post = posts.stream()
                 .filter(p -> p.getId().equals(id))
-                .findFirst();
-        return post;
+                .findFirst()
+                .orElseThrow(() -> new PostNotFoundException(id));
+        return ResponseEntity.ok(post);
     }
 
     @DeleteMapping("/posts/{id}")
-    public void destroy(@PathVariable String id) {
+    public ResponseEntity<Void> destroy(@PathVariable String id) {
         posts.removeIf(p -> p.getId().equals(id));
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/posts")
-    public List<Post> index(@RequestParam(defaultValue = "10") Integer limit) {
-        return posts.stream().limit(limit).toList();
+    public ResponseEntity<List<Post>> index(@RequestParam(defaultValue = "10") Integer limit) {
+        return ResponseEntity.ok(posts.stream().limit(limit).toList());
     }
 
     @PutMapping("/posts/{id}")
-    public Post update(@PathVariable String id, @RequestBody Post post) {
+    public ResponseEntity<Post> update(@PathVariable String id, @RequestBody Post post) {
         var maybePost = posts.stream()
                 .filter(p -> p.getId().equals(id))
                 .findFirst();
@@ -58,6 +75,6 @@ public class HelloController {
             poost.setContent(post.getContent());
             poost.setAuthor(post.getAuthor());
         }
-        return post;
+        return ResponseEntity.ok(post);
     }
 }
