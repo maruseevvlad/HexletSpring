@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 // Кастомное исключение
 class PostNotFoundException extends RuntimeException {
@@ -24,18 +23,9 @@ class GlobalExceptionHandler {
 }
 
 @RestController
-public class HelloController {
+@RequestMapping("/api")
+public class PostsController {
     private final List<Post> posts = new ArrayList<>();
-
-    @GetMapping("/")
-    public String home() {
-        return "Добро пожаловать в Hexlet Spring Blog!";
-    }
-
-    @GetMapping("/about")
-    public String about() {
-        return "This is simple Spring blog!";
-    }
 
     @PostMapping("/post")
     public ResponseEntity<Post> create(@RequestBody Post post) {

@@ -1,14 +1,7 @@
----
 logging:
   level:
     root: WARN
     org.springframework.boot: INFO
-    org:
-      zalando:
-        logbook: TRACE
-      springframework:
-        # web: DEBUG
-        security: DEBUG
 
 spring:
   jpa:
@@ -17,19 +10,12 @@ spring:
   output:
     ansi:
       enabled: always
-  config:
-    activate:
-      on-profile: dev
-
-sentry:
-  dsn: https://examplePublicKey@o0.ingest.sentry.io/0
-  tracesSampleRate: 1.0
-
-logbook:
-  strategy: status-at-least
-  minimum-status: 400
-  format:
-    style: http
+  logging:
+    pattern:
+      dateformat: "yyyy-MM-dd HH:mm:ss"
 
 server:
   address: 0.0.0.0
+
+app:
+  welcome-message: "Welcome to Spring blog!"

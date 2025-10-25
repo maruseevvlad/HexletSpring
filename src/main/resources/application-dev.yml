@@ -1,0 +1,22 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    org:
+      zalando:
+        logbook: TRACE
+      springframework:
+        security: DEBUG
+
+sentry:
+  dsn: https://examplePublicKey@o0.ingest.sentry.io/0
+  tracesSampleRate: 1.0
+
+logbook:
+  strategy: status-at-least
+  minimum-status: 400
+  format:
+    style: http
